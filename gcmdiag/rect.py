@@ -4,6 +4,11 @@
 :py:mod:`rect.py` Rectify the pressure grid
 -------------------------------------------
 
+Converts a NetCDF file from sigma coordinates to pressure coordinates,
+then interpolates all arrays to a rectified pressure grid. The user
+can choose between linear interpolation (slow) and cubic interpolation
+(really, really slow).
+
 '''
 
 from __future__ import division, print_function, absolute_import, unicode_literals

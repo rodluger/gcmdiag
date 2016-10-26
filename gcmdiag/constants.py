@@ -6,6 +6,6 @@
 
 '''
 
-REARTH = 6371000. #m
-OMEGA = 7.292e-5  #rad/s
-PREF = 100000.    #Pa
+REARTH = 6371000. # m
+OMEGA = 7.292e-5  # rad/s
+PREF = 100000.    # Pa
