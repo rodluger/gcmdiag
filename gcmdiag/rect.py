@@ -42,12 +42,12 @@ def Rectify(file, interpolation = 'linear'):
   newvars = {}
   for n, name in enumerate(varnames):
     var = np.array(f.variables[name][:])
-    for i, _ in enumerate(f.variables['time'][:]):
+    for i, _ in enumerate(f.variables['time'][:3]): #debug
       sys.stdout.write('\rVariable %d/%d: Processing time %d/%d...' % (n + 1, len(varnames), i + 1, len(f.variables['time'][:])))
       sys.stdout.flush()
       for k, _ in enumerate(f.variables['lat'][:]):
         for l, _ in enumerate(f.variables['lon'][:]):
-          var[i,:,k,l] = interp1d(pfull_[i,:,k,l], var[i,:,k,l], kind=interpolation, bounds_error=False)(pfull)  
+          var[i,:,k,l] = interp1d(pfull_[i,:,k,l], var[i,:,k,l], kind=interpolation, bounds_error=False, fill_value="extrapolate")(pfull)  
     newvars.update({name: var})
     
   # Create a new NetCDF file with just the rectified grids
@@ -57,7 +57,10 @@ def Rectify(file, interpolation = 'linear'):
   
   # Create the dimensions and the variables
   for name, length in dict(f.dimensions).items(): 
-    fnew.createDimension(name, length)
+    try:
+      fnew.createDimension(name, length)
+    except:
+      import pdb; pdb.set_trace()
   for name in f.variables.keys():
     var = fnew.createVariable(name, f.variables[name].data.dtype, f.variables[name].dimensions)
     if name in varnames:

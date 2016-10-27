@@ -41,7 +41,7 @@ class array(np.ndarray):
     # Call the parent
     return np.ndarray.__array_wrap__(self, out_arr, context)
   
-  def mean(self, *axes):
+  def avg(self, *axes):
     '''
     Returns the mean along one or more of the axes, which
     are input as strings.
@@ -52,7 +52,7 @@ class array(np.ndarray):
     newdims = list(self.dims)
     [newdims.remove(a) for a in axes]
     if len(axis):
-      return array(np.average(self, axis = axis), unit = self.unit, 
+      return array(np.nanaverage(self, axis = axis), unit = self.unit, 
                    name = self.name, dims = newdims, desc = self.desc)
     else:
       return self
@@ -67,7 +67,7 @@ class array(np.ndarray):
     shape = list(self.shape)
     for a in axis: 
       shape[a] = 1
-    return self - array(np.average(self, axis = axis).reshape(*shape),
+    return self - array(np.nanaverage(self, axis = axis).reshape(*shape),
                         unit = self.unit, name = self.name, dims = self.dims,
                         desc = self.desc)
   
@@ -77,11 +77,11 @@ class array(np.ndarray):
   
     '''
     
-    return array(np.sum(np.gradient(self), axis = 0), unit = '', name = 'div(%s)' % self.name, dims = self.dims, desc = 'div(%s)' % self.name)
+    return array(np.nansum(np.gradient(self), axis = 0), unit = '', name = 'div(%s)' % self.name, dims = self.dims, desc = 'div(%s)' % self.name)
   
   def integral(self, x):
     '''
-    Returns the integral along axis axis `x`
+    Returns the integral along axis axis `x`.
     
     '''
     

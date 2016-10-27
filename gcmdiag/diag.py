@@ -77,7 +77,7 @@ class NetCDF(object):
     
     '''
     
-    vbar = self.vcomp.mean('time', 'lon')
+    vbar = self.vcomp.avg('time', 'lon')
     cosTheta = np.cos(self.lat * np.pi / 180.).reshape(1,-1)
     integrand = vbar * cosTheta
     psi = np.zeros((len(self.pfull), len(self.lat)))
@@ -93,7 +93,7 @@ class NetCDF(object):
     '''
   
     uvp = self.vcomp.prime('time', 'lon') * self.ucomp.prime('time', 'lon')
-    F = uvp.mean('time', 'lon') * REARTH * np.cos(self.lat * np.pi / 180.).reshape(1, -1)
+    F = uvp.avg('time', 'lon') * REARTH * np.cos(self.lat * np.pi / 180.).reshape(1, -1)
     F.name = 'eddyangmom'
     F.desc = 'eddy angular momentum flux'
     F.unit = ''
@@ -106,7 +106,7 @@ class NetCDF(object):
   
     '''
   
-    F = (self.vcomp.prime('time', 'lon') * self.temp.prime('time', 'lon')).mean('time', 'lon')
+    F = (self.vcomp.prime('time', 'lon') * self.temp.prime('time', 'lon')).avg('time', 'lon')
     F.name = 'eddyheat'
     F.desc = 'meridional eddy heat flux'
     F.unit = 'K m/s'
@@ -120,7 +120,7 @@ class NetCDF(object):
     '''
       
     # Relative angular momentum
-    M = self.ucomp.mean('time', 'lon') * REARTH * np.cos(self.lat * np.pi / 180.).reshape(1,-1)
+    M = self.ucomp.avg('time', 'lon') * REARTH * np.cos(self.lat * np.pi / 180.).reshape(1,-1)
     M.name = 'relangmom'
     M.desc = 'relative angular momentum'
     M.unit = ''
@@ -146,7 +146,7 @@ class NetCDF(object):
     
     '''
     
-    TOA = self.swdn_toa[0] - self.olr.mean('time')
+    TOA = self.swdn_toa[0] - self.olr.avg('time')
     TOA.name = 'toaimbalance'
     TOA.desc = 'TOA imbalance'
     return TOA
