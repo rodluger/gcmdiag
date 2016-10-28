@@ -13,16 +13,14 @@ can choose between linear interpolation (slow) and cubic interpolation
 
 from __future__ import division, print_function, absolute_import, unicode_literals
 from .constants import PREF
-import matplotlib.pyplot as pl
 import numpy as np
-import matplotlib.pyplot as pl
 from scipy.interpolate import interp1d
 from scipy.io import netcdf
 import sys
 
 __all__ = ['Rectify']
 
-def Rectify(file, interpolation = 'linear'):
+def Rectify(file, interpolation = 'linear', debug = False):
   '''
   
   '''
@@ -35,14 +33,15 @@ def Rectify(file, interpolation = 'linear'):
   for var in list(f.variables.keys()):
     if f.variables[var].dimensions == ('time', 'pfull', 'lat', 'lon'):
       pres_variables.update({var: [f.variables[var][:].dtype, dict(f.variables[var]._attributes)]})
-    
-  # Create the true irregular pressure grid from the sigma coordinate
-  # This is a 4D array (time, pressure, lat, lon). Units are mb.
-  print("Computing new pressure grid...")
-  pfull_ = np.stack([f.variables['ps'][:] * p / PREF for p in f.variables['pfull'][:]], axis = 1)
+   
+  if not debug: 
+    # Create the true irregular pressure grid from the sigma coordinate
+    # This is a 4D array (time, pressure, lat, lon). Units are mb.
+    print("Computing new pressure grid...")
+    pfull_ = np.stack([f.variables['ps'][:] * p / PREF for p in f.variables['pfull'][:]], axis = 1)
 
-  # Rectify pfull
-  pfull = np.nanmedian(pfull_, axis = (0,2,3))
+    # Rectify pfull
+    pfull = np.nanmedian(pfull_, axis = (0,2,3))
   
   # Get the other variables
   other_variables = {}
@@ -57,22 +56,19 @@ def Rectify(file, interpolation = 'linear'):
   dimensions['time'] = ntime
   nlat = f.variables['lat'].shape[0]
   nlon = f.variables['lon'].shape[0]
-  
-  # DEBUG
-  ntime = 3
-  # /DEBUG
-  
+    
   # Rectify each of the 4D variables
   newvars = {}
   for n, name in enumerate(pres_variables):
     var = np.array(f.variables[name][:])
-    for i in range(ntime):
-      sys.stdout.write('\rVariable %d/%d: Processing time %d/%d...' % (n + 1, len(pres_variables), i + 1, ntime))
-      sys.stdout.flush()
-      for k in range(nlat):
-        for l in range(nlon):
-          var[i,:,k,l] = interp1d(pfull_[i,:,k,l], var[i,:,k,l], kind=interpolation, 
-                                  bounds_error=False, fill_value="extrapolate")(pfull)  
+    if not debug:
+      for i in range(ntime):
+        sys.stdout.write('\rVariable %d/%d: Processing time %d/%d...' % (n + 1, len(pres_variables), i + 1, ntime))
+        sys.stdout.flush()
+        for k in range(nlat):
+          for l in range(nlon):
+            var[i,:,k,l] = interp1d(pfull_[i,:,k,l], var[i,:,k,l], kind=interpolation, 
+                                    bounds_error=False, fill_value="extrapolate")(pfull)  
     newvars.update({name: var})
   
   # Close original file
@@ -97,10 +93,11 @@ def Rectify(file, interpolation = 'linear'):
     var[:] = other_variables[name][3]
     for atr, val in other_variables[name][2].items():
       setattr(var, atr, val)
-    
-  # Update the pressure grid
-  fnew.variables['pfull'][:] = pfull
-  fnew.variables['pfull'].long_name = 'True pressure'
+  
+  if not debug:
+    # Update the pressure grid
+    fnew.variables['pfull'][:] = pfull
+    fnew.variables['pfull'].long_name = 'True pressure'
   
   # Close
   fnew.close()
