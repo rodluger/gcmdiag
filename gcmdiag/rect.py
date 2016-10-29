@@ -20,7 +20,7 @@ import sys
 
 __all__ = ['Rectify']
 
-def Rectify(file, interpolation = 'linear', debug = False):
+def Rectify(file, interpolation = 'linear', debug = False, outfile = None):
   '''
   
   '''
@@ -75,7 +75,8 @@ def Rectify(file, interpolation = 'linear', debug = False):
   f.close()
   
   # Create a new NetCDF file with just the rectified grids
-  outfile = '%s.rect.nc' % file[:-3]
+  if outfile is None:
+    outfile = '%s.rect.nc' % file[:-3]
   print("\nSaving to `%s`..." % outfile)
   fnew = netcdf.netcdf_file(outfile, mode = 'w')
   
