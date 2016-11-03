@@ -23,4 +23,4 @@ for rectify in [False, True]:
   
 titles = ['Sigma coordinates', 'Pressure coordinates']
 fig, ax = gcm.Compare(x, y, z, titles = titles, c = c, invert_y = True)
-pl.show()
+fig.savefig('compare_sigma_pressure.png')

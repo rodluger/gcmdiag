@@ -55,7 +55,7 @@ def Compare(x, y, z, titles = None, c = None, **kwargs):
     c = [None for i in z]
   vmin = kwargs.pop('vmin', np.min([zn.min() for zn in z]))
   vmax = kwargs.pop('vmax', np.max([zn.max() for zn in z]))
-  fig = pl.figure(figsize = (12, 6))
+  fig = pl.figure(figsize = (14, 10))
   fig.subplots_adjust(top = 0.875)
   ax = [pl.subplot2grid((1, 11 * len(z) + 1), (0, 11 * n), colspan = 10) for n in range(len(z))]
   cax = pl.subplot2grid((1, 11 * len(z) + 1), (0, 11 * len(z)))
