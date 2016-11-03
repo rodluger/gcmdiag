@@ -109,6 +109,70 @@ class GCMOutput(object):
     TOA.desc = 'TOA imbalance'
     return TOA
   
+  @property
+  def drystaticenergy(self):
+    '''
+    Returns the dry static energy flux
+    
+    '''
+    
+    vprime = self.vcomp.prime('time', 'lon')
+    tprime = self.temp.prime('time', 'lon')
+    zprime = self.hght.prime('time', 'lon')
+    
+    DSE = vprime * (CPAIR * self.pfull * tprime + GRAV * zprime)
+    DSE = DSE.avg('time', 'lon')
+    DSE.name = 'drystaticenergy'
+    DSE.desc = 'dry static energy flux'
+    DSE.unit = ''
+    return DSE
+
+  @property
+  def latentheat(self):
+    '''
+    Returns the latent heat flux
+    
+    '''
+    
+    vprime = self.vcomp.prime('time', 'lon')
+    qprime = self.sphum.prime('time', 'lon')
+    
+    LH = HLV * vprime * qprime
+    LH = LH.avg('time', 'lon')
+    LH.name = 'latentheat'
+    LH.desc = 'latent heat flux'
+    LH.unit = ''
+    return LH
+
+  @property
+  def moiststaticenergy(self):
+    '''
+    Returns the moist static energy flux
+    
+    '''
+    
+    MSE = self.latentheat + self.drystaticenergy
+    MSE.name = 'moiststaticenergy'
+    MSE.desc = 'moist static energy flux'
+    MSE.unit = ''
+    return MSE
+
+  @property
+  def convintmeridflux(self):
+    '''
+    Returns the convergence of the vertically-integrated meridional 
+    flux of moist static energy
+    
+    '''
+    
+    # Vertically-integrated meridional flux
+    z = self.moiststaticenergy.integral(self.pfull).mean('time')
+    cimf = z.divergence()
+    cimf.name = 'convintmeridflux'
+    cimf.desc = 'time-mean convergence of the vertically-integrated meridional flux of moist static energy'
+    cimf.unit = ''
+    return cimf
+
 class NetCDF(GCMOutput):
   '''
   A smart netcdf data container
