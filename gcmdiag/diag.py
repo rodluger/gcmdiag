@@ -112,7 +112,7 @@ class GCMOutput(object):
   @property
   def drystaticenergy(self):
     '''
-    Returns the dry static energy flux
+    Returns the instantaneous dry static energy flux
     
     '''
     
@@ -120,8 +120,8 @@ class GCMOutput(object):
     tprime = self.temp.prime('time', 'lon')
     zprime = self.hght.prime('time', 'lon')
     
-    DSE = vprime * (CPAIR * self.pfull * tprime + GRAV * zprime)
-    DSE = DSE.avg('time', 'lon')
+    DSE = vprime * (CPAIR * self.pfull.reshape(1, -1, 1, 1) * tprime + GRAV * zprime)
+    #DSE = DSE.avg('time', 'lon')
     DSE.name = 'drystaticenergy'
     DSE.desc = 'dry static energy flux'
     DSE.unit = ''
@@ -130,7 +130,7 @@ class GCMOutput(object):
   @property
   def latentheat(self):
     '''
-    Returns the latent heat flux
+    Returns the instantaneous latent heat flux
     
     '''
     
@@ -138,7 +138,7 @@ class GCMOutput(object):
     qprime = self.sphum.prime('time', 'lon')
     
     LH = HLV * vprime * qprime
-    LH = LH.avg('time', 'lon')
+    #LH = LH.avg('time', 'lon')
     LH.name = 'latentheat'
     LH.desc = 'latent heat flux'
     LH.unit = ''

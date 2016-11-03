@@ -1,4 +1,5 @@
 from __future__ import division, print_function, absolute_import, unicode_literals
+import matplotlib; matplotlib.use('Agg')
 from . import constants, diag, netcdfcombine, plot, rect, utils
 from .diag import *
 from .plot import *
