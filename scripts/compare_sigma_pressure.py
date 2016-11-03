@@ -5,7 +5,7 @@ import matplotlib.pyplot as pl
 import numpy as np
 
 # Load
-file = os.path.join(GCMDIAG_OUT, 'output/N2-1bar/day1000h00/day1000h00.atmos_daily.nc')
+file = os.path.join(GCMDIAG_OUT, 'N2-1bar/day1000h00/day1000h00.atmos_daily.nc')
 
 # Rectify and compare
 x = []
