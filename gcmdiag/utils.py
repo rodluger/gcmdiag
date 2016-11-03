@@ -52,7 +52,7 @@ class array(np.ndarray):
     newdims = list(self.dims)
     [newdims.remove(a) for a in axes]
     if len(axis):
-      return array(np.nanaverage(self, axis = axis), unit = self.unit, 
+      return array(np.nanmean(self, axis = axis), unit = self.unit, 
                    name = self.name, dims = newdims, desc = self.desc)
     else:
       return self
@@ -67,7 +67,7 @@ class array(np.ndarray):
     shape = list(self.shape)
     for a in axis: 
       shape[a] = 1
-    return self - array(np.nanaverage(self, axis = axis).reshape(*shape),
+    return self - array(np.nanmean(self, axis = axis).reshape(*shape),
                         unit = self.unit, name = self.name, dims = self.dims,
                         desc = self.desc)
   

@@ -31,8 +31,8 @@ def ColorMap(x, y, z, c = None, ax = None, invert_y = True, cax = None, **kwargs
   
   # Plot a contour of something
   if c is not None:
-    cont = ax.contour(xgrid, ygrid, c, 10, colors = 'k', **kwargs)
-    pl.clabel(cont, fontsize=6, inline=1, fmt="%d")
+    cont = ax.contour(xgrid, ygrid, c, 5, colors = 'k', **kwargs)
+    pl.clabel(cont, fontsize=9, inline=1, fmt="%d")
   
   # Set limits and stuff
   if invert_y:

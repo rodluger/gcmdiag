@@ -9,66 +9,24 @@
 from __future__ import division, print_function, absolute_import, unicode_literals
 from .constants import *
 from .utils import array
+from .rect import Rectify
 from scipy.io import netcdf
 import numpy as np
+import os
 
 __all__ = ['NetCDF']
 
-class NetCDF(object):
+class GCMOutput(object):
   '''
-  A smart netcdf data container
   
   '''
-
-  def __init__(self, file, avg_file = None):
+  
+  def __init__(self, *args, **kwargs):
     '''
     
     '''
     
-    # Open file to get variable names
-    self.file = file
-    f = netcdf.netcdf_file(self.file)
-    self._vars = {}
-    for var in f.variables.keys():
-      self._vars.update({var: None})
-    f.close()
-    
-    # If there's an average file, peek at it
-    self.avg_file = avg_file
-    self._avg_vars = {}
-    if self.avg_file:
-      f = netcdf.netcdf_file(self.avg_file)
-      for var in f.variables.keys():
-        self._avg_vars.update({var: None})
-      f.close()
-
-  def __getattr__(self, var):  
-    '''
-    
-    '''
-
-    if var in self._vars:
-      if self._vars[var] is None:
-        f = netcdf.netcdf_file(self.file)
-        val = np.array(f.variables[var][:])
-        unit = f.variables[var].units.decode('utf-8')
-        desc = f.variables[var].long_name.decode('utf-8')
-        dims = f.variables[var].dimensions
-        self._vars.update({var: array(val, unit = unit, name = var, dims = dims, desc = desc)})
-        f.close()
-      return self._vars[var]
-    elif var in self._avg_vars:
-      if self._avg_vars[var] is None:
-        f = netcdf.netcdf_file(self.avg_file)
-        val = np.array(f.variables[var][:])
-        unit = f.variables[var].units.decode('utf-8')
-        desc = f.variables[var].long_name.decode('utf-8')
-        dims = f.variables[var].dimensions
-        self._avg_vars.update({var: array(val, unit = unit, name = var, dims = dims, desc = desc)})
-        f.close()
-      return self._avg_vars[var]
-    else:
-      return None
+    raise NotImplementedError('Not a user-facing class!')
   
   @property
   def streamfunc(self):
@@ -132,7 +90,7 @@ class NetCDF(object):
     Returns the total angular momentum of the atmosphere
     
     '''
-    
+
     M = self.relangmom + OMEGA * REARTH ** 2 * np.cos(self.lat * np.pi / 180.).reshape(1,-1) ** 2
     M.name = 'totalangmom'
     M.desc = 'total angular momentum'
@@ -150,3 +108,75 @@ class NetCDF(object):
     TOA.name = 'toaimbalance'
     TOA.desc = 'TOA imbalance'
     return TOA
+  
+class NetCDF(GCMOutput):
+  '''
+  A smart netcdf data container
+  
+  '''
+
+  def __init__(self, file, rectify = False, interpolation = 'linear', avg_file = None):
+    '''
+    
+    '''
+    
+    # Open file to get variable names
+    self.file = file
+    f = netcdf.netcdf_file(self.file)
+    self._vars = {}
+    for var in f.variables.keys():
+      self._vars.update({var: None})
+    f.close()
+    
+    # If there's an average file, peek at it
+    if avg_file is None:
+      if os.path.exists(self.file.replace('daily', 'average')):
+        avg_file = self.file.replace('daily', 'average')
+    self.avg_file = avg_file
+    self._avg_vars = {}
+    if self.avg_file:
+      f = netcdf.netcdf_file(self.avg_file)
+      for var in f.variables.keys():
+        self._avg_vars.update({var: None})
+      f.close()
+    
+    # Rectify the pressure grid?
+    if rectify:
+      self.rect_file = '%s.rect.npz' % self.file[:-3]
+      if not os.path.exists(self.rect_file):
+        Rectify(self.file, interpolation = interpolation)
+      rect = np.load(self.rect_file)
+      for var in rect.keys():
+        if not (var.endswith('_unit') or var.endswith('_dims') or var.endswith('_desc')):
+          setattr(self, var, array(rect[var], unit = rect[var + '_unit'][()], 
+                                   name = var, 
+                                   dims = tuple(rect[var + '_dims']), 
+                                   desc = rect[var + '_desc'][()]))
+
+  def __getattr__(self, var):  
+    '''
+    
+    '''
+
+    if var in self._vars:
+      if self._vars[var] is None:
+        f = netcdf.netcdf_file(self.file)
+        val = np.array(f.variables[var][:])
+        unit = f.variables[var].units.decode('utf-8')
+        desc = f.variables[var].long_name.decode('utf-8')
+        dims = f.variables[var].dimensions
+        self._vars.update({var: array(val, unit = unit, name = var, dims = dims, desc = desc)})
+        f.close()
+      return self._vars[var]
+    elif var in self._avg_vars:
+      if self._avg_vars[var] is None:
+        f = netcdf.netcdf_file(self.avg_file)
+        val = np.array(f.variables[var][:])
+        unit = f.variables[var].units.decode('utf-8')
+        desc = f.variables[var].long_name.decode('utf-8')
+        dims = f.variables[var].dimensions
+        self._avg_vars.update({var: array(val, unit = unit, name = var, dims = dims, desc = desc)})
+        f.close()
+      return self._avg_vars[var]
+    else:
+      return None
