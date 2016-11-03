@@ -5,3 +5,6 @@ from .plot import *
 from .utils import *
 from .netcdfcombine import *
 from .rect import *
+
+import os
+GCMDIAG_SRC = os.path.dirname(os.path.abspath(__file__))
