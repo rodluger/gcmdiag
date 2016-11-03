@@ -115,7 +115,8 @@ class NetCDF(GCMOutput):
   
   '''
 
-  def __init__(self, file, rectify = False, interpolation = 'linear', avg_file = None):
+  def __init__(self, file, rectify = False, interpolation = 'linear', 
+               avg_file = None, rect_file = None):
     '''
     
     '''
@@ -144,7 +145,7 @@ class NetCDF(GCMOutput):
     if rectify:
       self.rect_file = '%s.rect.npz' % self.file[:-3]
       if not os.path.exists(self.rect_file):
-        Rectify(self.file, interpolation = interpolation)
+        Rectify(self.file, interpolation = interpolation, rect_file = rect_file)
       rect = np.load(self.rect_file)
       for var in rect.keys():
         if not (var.endswith('_unit') or var.endswith('_dims') or var.endswith('_desc')):
