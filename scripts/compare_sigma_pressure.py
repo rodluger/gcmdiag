@@ -8,6 +8,7 @@ import numpy as np
 for run in ['1bar', 'p5bar', 'p25bar']:
 
   # Load
+  print("Running %s..." % run)
   file = os.path.join(GCMDIAG_OUT, 'N2-%s/day1000h00/day1000h00.atmos_daily.nc' % run)
 
   # Rectify and compare
