@@ -19,7 +19,7 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   mse = data.convintmeridflux
   
   # Plot
-  fig = pl.subplots(figsize = (14, 10))
+  fig = pl.figure(figsize = (14, 10))
   ax = [pl.subplot2grid((1, 20), (0, 0), colspan = 9),
         pl.subplot2grid((1, 20), (0, 10), colspan = 9)]
   cax = [pl.subplot2grid((1, 20), (0, 9)),
