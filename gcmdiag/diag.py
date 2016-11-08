@@ -121,7 +121,6 @@ class GCMOutput(object):
     zprime = self.hght.prime('time', 'lon')
     
     DSE = vprime * (CPAIR * self.pfull.reshape(1, -1, 1, 1) * tprime + GRAV * zprime)
-    #DSE = DSE.avg('time', 'lon')
     DSE.name = 'drystaticenergy'
     DSE.desc = 'dry static energy flux'
     DSE.unit = ''
@@ -138,7 +137,6 @@ class GCMOutput(object):
     qprime = self.sphum.prime('time', 'lon')
     
     LH = HLV * vprime * qprime
-    #LH = LH.avg('time', 'lon')
     LH.name = 'latentheat'
     LH.desc = 'latent heat flux'
     LH.unit = ''
@@ -166,7 +164,7 @@ class GCMOutput(object):
     '''
     
     # Vertically-integrated meridional flux
-    z = self.moiststaticenergy.integral(self.pfull).mean('time')
+    z = self.moiststaticenergy.integral(self.pfull).avg('time')
     cimf = -z.divergence()
     cimf.name = 'convintmeridflux'
     cimf.desc = 'time-mean convergence of the vertically-integrated meridional flux of moist static energy'
