@@ -27,4 +27,5 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   
   titles = ['Sigma coordinates', 'Pressure coordinates']
   fig, ax = gcm.Compare(x, y, z, titles = titles, c = c, invert_y = True)
+  pl.suptitle('Hadley Cell', fontsize = 18)
   fig.savefig('images/compare_sigma_pressure_%s.png' % run)
