@@ -147,7 +147,7 @@ class GCMOutput(object):
   @property
   def moiststaticenergy(self):
     '''
-    Returns the moist static energy flux
+    Returns the instantaneous moist static energy flux
     
     '''
     
@@ -160,14 +160,14 @@ class GCMOutput(object):
   @property
   def convintmeridflux(self):
     '''
-    Returns the convergence of the vertically-integrated meridional 
+    Returns the convergence of the vertically-integrated time average meridional 
     flux of moist static energy
     
     '''
     
     # Vertically-integrated meridional flux
     z = self.moiststaticenergy.integral(self.pfull).mean('time')
-    cimf = z.divergence()
+    cimf = -z.divergence()
     cimf.name = 'convintmeridflux'
     cimf.desc = 'time-mean convergence of the vertically-integrated meridional flux of moist static energy'
     cimf.unit = ''
