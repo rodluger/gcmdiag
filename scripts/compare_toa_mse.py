@@ -26,10 +26,10 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   ax = [pl.subplot2grid((1, 11 * 2 + 1), (0, 11 * n), colspan = 10) for n in range(2)]
   cax = pl.subplot2grid((1, 11 * 2 + 1), (0, 11 * 2))
 
-  ColorMap(x, y, toa, ax = ax[0], cax = cax, vmin = vmin, vmax = vmax)
+  gcm.ColorMap(x, y, toa, ax = ax[0], cax = cax, vmin = vmin, vmax = vmax)
   ax[0].set_title('TOA imbalance')
   
-  ColorMap(x, y, mse, ax = ax[1], cax = cax, vmin = vmin, vmax = vmax)
+  gcm.ColorMap(x, y, mse, ax = ax[1], cax = cax, vmin = vmin, vmax = vmax)
   ax[1].set_title('ConvIntMeridFlux')
   ax[1].set_ylabel('')
   ax[1].set_yticklabels([])
