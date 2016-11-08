@@ -19,14 +19,18 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   mse = data.convintmeridflux
   
   # Plot
-  fig, ax = pl.subplots(1, 2, figsize = (14, 10))
-  ax = ax.flatten()
+  fig = pl.subplots(figsize = (14, 10))
+  ax = [pl.subplot2grid((1, 20), (0, 0), colspan = 9),
+        pl.subplot2grid((1, 20), (0, 10), colspan = 9)]
+  cax = [pl.subplot2grid((1, 20), (0, 9)),
+         pl.subplot2grid((1, 20), (0, 19))]
+  
   fig.subplots_adjust(top = 0.875)
 
-  gcm.ColorMap(x, y, toa, ax = ax[0])
+  gcm.ColorMap(x, y, toa, ax = ax[0], cax = cax[0])
   ax[0].set_title('TOA imbalance')
   
-  gcm.ColorMap(x, y, mse, ax = ax[1])
+  gcm.ColorMap(x, y, mse, ax = ax[1], cax = cax[1])
   ax[1].set_title('ConvIntMeridFlux')
   
   pl.suptitle('Energy conservation', fontsize = 18)
