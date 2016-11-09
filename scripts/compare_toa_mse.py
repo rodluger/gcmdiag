@@ -20,10 +20,10 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   
   # Plot
   fig = pl.figure(figsize = (14, 10))
-  ax = [pl.subplot2grid((1, 20), (0, 0), colspan = 9),
-        pl.subplot2grid((1, 20), (0, 10), colspan = 9)]
-  cax = [pl.subplot2grid((1, 20), (0, 9)),
-         pl.subplot2grid((1, 20), (0, 19))]
+  ax = [pl.subplot2grid((1, 22), (0, 0), colspan = 9),
+        pl.subplot2grid((1, 22), (0, 12), colspan = 9)]
+  cax = [pl.subplot2grid((1, 22), (0, 9)),
+         pl.subplot2grid((1, 22), (0, 21))]
   
   fig.subplots_adjust(top = 0.875)
 

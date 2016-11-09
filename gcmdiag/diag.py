@@ -178,7 +178,7 @@ class NetCDF(GCMOutput):
   '''
 
   def __init__(self, file, rectify = False, interpolation = 'linear', 
-               avg_file = None, rect_file = None):
+               avg_file = None, rect_file = None, burnin = 0.25):
     '''
     
     '''
@@ -190,6 +190,7 @@ class NetCDF(GCMOutput):
     for var in f.variables.keys():
       self._vars.update({var: None})
     f.close()
+    self.burnin = burnin
     
     # If there's an average file, peek at it
     if avg_file is None:
@@ -214,7 +215,8 @@ class NetCDF(GCMOutput):
           setattr(self, var, array(rect[var], unit = rect[var + '_unit'][()], 
                                    name = var, 
                                    dims = tuple(rect[var + '_dims']), 
-                                   desc = rect[var + '_desc'][()]))
+                                   desc = rect[var + '_desc'][()],
+                                   burnin = self.burnin))
 
   def __getattr__(self, var):  
     '''
@@ -228,7 +230,7 @@ class NetCDF(GCMOutput):
         unit = f.variables[var].units.decode('utf-8')
         desc = f.variables[var].long_name.decode('utf-8')
         dims = f.variables[var].dimensions
-        self._vars.update({var: array(val, unit = unit, name = var, dims = dims, desc = desc)})
+        self._vars.update({var: array(val, unit = unit, name = var, dims = dims, desc = desc, burnin = self.burnin)})
         f.close()
       return self._vars[var]
     elif var in self._avg_vars:
@@ -238,7 +240,7 @@ class NetCDF(GCMOutput):
         unit = f.variables[var].units.decode('utf-8')
         desc = f.variables[var].long_name.decode('utf-8')
         dims = f.variables[var].dimensions
-        self._avg_vars.update({var: array(val, unit = unit, name = var, dims = dims, desc = desc)})
+        self._avg_vars.update({var: array(val, unit = unit, name = var, dims = dims, desc = desc, burnin = self.burnin)})
         f.close()
       return self._avg_vars[var]
     else:

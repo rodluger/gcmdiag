@@ -17,7 +17,7 @@ class array(np.ndarray):
   
   '''
   
-  def __new__(cls, input_array, unit = None, name = None, dims = None, desc = None):
+  def __new__(cls, input_array, unit = None, name = None, dims = None, desc = None, burnin = 0.):
     # Input array is an already formed ndarray instance
     # We first cast to be our class type
     obj = np.asarray(input_array).view(cls)
@@ -26,6 +26,7 @@ class array(np.ndarray):
     obj.name = name
     obj.desc = desc
     obj.dims = dims
+    obj.burnin = burnin
     # Finally, we must return the newly created object:
     return obj
 
@@ -36,6 +37,7 @@ class array(np.ndarray):
     self.name = getattr(obj, 'name', None)
     self.desc = getattr(obj, 'desc', None)
     self.dims = getattr(obj, 'dims', None)
+    self.burnin = getattr(obj, 'burnin', 0.)
   
   def __array_wrap__(self, out_arr, context = None):
     # Call the parent
@@ -44,7 +46,8 @@ class array(np.ndarray):
   def avg(self, *axes):
     '''
     Returns the mean along one or more of the axes, which
-    are input as strings.
+    are input as strings. If taking the mean along the time
+    axis, discards the burn-in.
     
     '''
     
@@ -52,7 +55,12 @@ class array(np.ndarray):
     newdims = list(self.dims)
     [newdims.remove(a) for a in axes]
     if len(axis):
-      return array(np.nanmean(self, axis = axis), unit = self.unit, 
+      if 'time' in axes:
+        n = np.argmax(axes == 'time')
+        arr = np.delete(self, int(self.burnin * self.shape[n]), axis = n)
+      else:
+        arr = self
+      return array(np.nanmean(arr, axis = axis), unit = self.unit, 
                    name = self.name, dims = newdims, desc = self.desc)
     else:
       return self
@@ -67,7 +75,12 @@ class array(np.ndarray):
     shape = list(self.shape)
     for a in axis: 
       shape[a] = 1
-    return self - array(np.nanmean(self, axis = axis).reshape(*shape),
+    if 'time' in axes:
+      n = np.argmax(axes == 'time')
+      arr = np.delete(self, int(self.burnin * self.shape[n]), axis = n)
+    else:
+      arr = self
+    return self - array(np.nanmean(arr, axis = axis).reshape(*shape),
                         unit = self.unit, name = self.name, dims = self.dims,
                         desc = self.desc)
   

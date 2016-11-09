@@ -27,7 +27,7 @@ def ColorMap(x, y, z, c = None, ax = None, invert_y = True, cax = None, **kwargs
   if cax:
     cb = pl.colorbar(im, cax = cax)
   else:
-    cb = pl.colorbar(im, cax = ax)
+    cb = pl.colorbar(im)
   
   # Plot a contour of something
   if c is not None:
@@ -41,8 +41,10 @@ def ColorMap(x, y, z, c = None, ax = None, invert_y = True, cax = None, **kwargs
   else:
     ax.set_ylim(y.min(), y.max())
   ax.set_xlim(x.min(), x.max())
-  ax.set_xlabel(x.label, fontsize = 12)
-  ax.set_ylabel(y.label, fontsize = 12)
+  if hasattr(x, 'label'):
+    ax.set_xlabel(x.label, fontsize = 12)
+  if hasattr(y, 'label'):
+    ax.set_ylabel(y.label, fontsize = 12)
   
   return ax, cb
 
