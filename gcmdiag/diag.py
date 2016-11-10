@@ -64,7 +64,7 @@ class GCMOutput(object):
   
     '''
   
-    F = (self.vcomp.prime('time', 'lon') * self.temp.prime('time', 'lon')).avg('time', 'lon')
+    F = (CPAIR * self.vcomp.prime('time', 'lon') * self.temp.prime('time', 'lon')).avg('time', 'lon')
     F.name = 'eddyheat'
     F.desc = 'meridional eddy heat flux'
     F.unit = 'K m/s'
@@ -164,7 +164,7 @@ class GCMOutput(object):
     '''
     
     # Vertically-integrated meridional flux
-    z = self.moiststaticenergy.integral(self.pfull).avg('time')
+    z = (1. / GRAV) * self.moiststaticenergy.integral(self.pfull * 100.).avg('time')
     cimf = -z.divergence()
     cimf.name = 'convintmeridflux'
     cimf.desc = 'time-mean convergence of the vertically-integrated meridional flux of moist static energy'
