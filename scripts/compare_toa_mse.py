@@ -1,5 +1,6 @@
 import gcmdiag as gcm
 from gcmdiag import GCMDIAG_OUT
+from gcmdiag.constants import *
 import os
 import matplotlib.pyplot as pl
 import numpy as np
@@ -22,16 +23,24 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   fig = pl.figure(figsize = (14, 10))
   ax = [pl.subplot2grid((1, 22), (0, 0), colspan = 9),
         pl.subplot2grid((1, 22), (0, 12), colspan = 9)]
-  cax = [pl.subplot2grid((1, 22), (0, 9)),
-         pl.subplot2grid((1, 22), (0, 21))]
+  cax = pl.subplot2grid((1, 22), (0, 9))
   
   fig.subplots_adjust(top = 0.875)
-
-  gcm.ColorMap(x, y, toa, ax = ax[0], cax = cax[0])
+  
+  # Colormap
+  gcm.ColorMap(x, y, toa, ax = ax[0], cax = cax)
   ax[0].set_title('TOA imbalance')
   
-  gcm.ColorMap(x, y, mse, ax = ax[1], cax = cax[1])
-  ax[1].set_title('ConvIntMeridFlux')
+  # 1D comparison
+  ax[1].plot(mse, y, 'b-', lw = 2, label = 'MSE')
+  ax[1].plot(toa.avg('lon'), y, 'r-', lw = 2, label = 'TOA')
+  ax[1].set_ylabel(ax[0].get_ylabel())
+  ax[1].set_ylim(ax[0].get_ylim())
+  ax[1].set_xlabel('Energy flux (W/m^2)')
+  ax[1].yaxis.tick_right()
+  ax[1].yaxis.set_label_position("right")
+  ax[1].legend(loc = 'best')
   
   pl.suptitle('Energy conservation', fontsize = 18)
   fig.savefig('images/compare_toa_mse_%s.png' % run)
+  

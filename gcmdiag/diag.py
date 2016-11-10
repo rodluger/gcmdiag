@@ -103,8 +103,10 @@ class GCMOutput(object):
     Returns the top-of-atmosphere radiative imbalance (DSW - ULW)
     
     '''
-    
-    TOA = self.swdn_toa[0] - self.olr.avg('time')
+    swdn = self.swdn_toa[0]
+    olr = self.olr.avg('time')
+    TOA = swdn - olr
+    TOA.dims = olr.dims
     TOA.name = 'toaimbalance'
     TOA.desc = 'TOA imbalance'
     return TOA
@@ -148,7 +150,7 @@ class GCMOutput(object):
     Returns the instantaneous moist static energy flux
     
     '''
-    
+
     MSE = self.latentheat + self.drystaticenergy
     MSE.name = 'moiststaticenergy'
     MSE.desc = 'moist static energy flux'
@@ -158,16 +160,16 @@ class GCMOutput(object):
   @property
   def convintmeridflux(self):
     '''
-    Returns the convergence of the vertically-integrated time average meridional 
+    Returns the convergence of the vertically-integrated time and zonal average meridional 
     flux of moist static energy
     
     '''
     
-    # Vertically-integrated meridional flux
-    z = (1. / GRAV) * self.moiststaticenergy.integral(self.pfull * 100.).avg('time')
-    cimf = -z.divergence()
+    # Vertically-integrated meridional flux (time and zonal average)
+    z = (1. / GRAV) * self.moiststaticenergy.integral(self.pfull * 100.).avg('time', 'lon')
+    cimf = -z.grad(REARTH * self.lat)
     cimf.name = 'convintmeridflux'
-    cimf.desc = 'time-mean convergence of the vertically-integrated meridional flux of moist static energy'
+    cimf.desc = 'time-mean, zonal-mean convergence of the vertically-integrated meridional flux of moist static energy'
     cimf.unit = ''
     return cimf
 

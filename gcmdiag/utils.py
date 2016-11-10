@@ -84,23 +84,58 @@ class array(np.ndarray):
                         unit = self.unit, name = self.name, dims = self.dims,
                         desc = self.desc)
   
-  def divergence(self):
+  def grad(self, x):
     '''
-    Computes the divergence of the array
-  
+    Computes the gradient along the axis `x` (a 1D `array` instance).
+    Based on http://stackoverflow.com/a/25877826.
+    
     '''
     
-    return array(np.nansum(np.gradient(self), axis = 0), unit = '', name = 'div(%s)' % self.name, dims = self.dims, desc = 'div(%s)' % self.name)
-  
+    # Get the axis index
+    try:
+      axis = np.where([d == x.name for d in self.dims])[0][0]
+    except IndexError:
+      raise ValueError('No axis named `%s`.' % x.name)
+    
+    # Reshape x
+    shape = [1 for i in range(len(self.shape))]
+    shape[axis] = -1
+    shape = tuple(shape)
+    x = x.reshape(*shape)   
+    sz = self.shape[axis]  
+     
+    # Compute a central difference.
+    x0 = np.delete(x, [sz - 1, sz - 2], axis = axis)
+    x1 = np.delete(x, [0, sz - 1], axis = axis)
+    x2 = np.delete(x, [0, 1], axis = axis)
+    y0 = np.delete(self, [sz - 1, sz - 2], axis = axis)
+    y1 = np.delete(self, [0, sz - 1], axis = axis)
+    y2 = np.delete(self, [0, 1], axis = axis)
+    f = (x2 - x1) / (x2 - x0)
+    result = (1 - f) * (y2 - y1) / (x2 - x1) + f * (y1 - y0) / (x1 - x0)
+    
+    # Add zeros to the two edges for simplicity
+    eshape = list(result.shape)
+    eshape[axis] = 1
+    eshape = tuple(eshape)
+    edge = np.zeros(eshape)
+    result = np.concatenate([edge, result, edge], axis = axis)
+    
+    return array(result, unit = '', name = 'grad(%s)' % self.name, dims = self.dims, desc = 'grad(%s)' % self.name)
+
   def integral(self, x):
     '''
-    Returns the integral along axis axis `x`.
+    Returns the integral along the axis `x` (an `array` instance).
     
     '''
     
     newdims = list(self.dims)
     newdims.remove(x.name)
-    res = np.trapz(self, x, axis = np.where([d == x.name for d in self.dims])[0])
+    try:
+      axis = np.where([d == x.name for d in self.dims])[0][0]
+    except IndexError:
+      raise ValueError('No axis named `%s`.' % x.name)
+    res = np.trapz(self, x, axis = axis)
     return array(res, name = 'int(%s)' % self.name, unit = '', dims = newdims, desc = 'int(%s)' % self.name)
   
   @property

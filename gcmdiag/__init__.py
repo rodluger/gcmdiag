@@ -1,5 +1,8 @@
 from __future__ import division, print_function, absolute_import, unicode_literals
-import matplotlib; matplotlib.use('Agg')
+import platform
+if platform.system() == "Linux":
+  import matplotlib as mpl
+  mpl.use("Agg", warn = False)
 from . import constants, diag, netcdfcombine, plot, rect, utils
 from .diag import *
 from .plot import *
