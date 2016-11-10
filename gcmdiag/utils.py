@@ -57,7 +57,7 @@ class array(np.ndarray):
     if len(axis):
       if 'time' in axes:
         n = np.argmax(axes == 'time')
-        arr = np.delete(self, int(self.burnin * self.shape[n]), axis = n)
+        arr = np.delete(self, range(int(self.burnin * self.shape[n])), axis = n)
       else:
         arr = self
       return array(np.nanmean(arr, axis = axis), unit = self.unit, 
