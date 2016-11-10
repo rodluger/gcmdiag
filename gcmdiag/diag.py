@@ -112,9 +112,9 @@ class GCMOutput(object):
     return TOA
   
   @property
-  def drystaticenergy(self):
+  def eddydrystaticenergy(self):
     '''
-    Returns the instantaneous dry static energy flux
+    Returns the instantaneous eddy dry static energy flux
     
     '''
     
@@ -123,6 +123,48 @@ class GCMOutput(object):
     zprime = self.hght.prime('time', 'lon')
     
     DSE = vprime * (CPAIR * tprime + GRAV * zprime)
+    DSE.name = 'eddydrystaticenergy'
+    DSE.desc = 'eddy dry static energy flux'
+    DSE.unit = ''
+    return DSE
+
+  @property
+  def eddylatentheat(self):
+    '''
+    Returns the instantaneous eddy latent heat flux
+    
+    '''
+    
+    vprime = self.vcomp.prime('time', 'lon')
+    qprime = self.sphum.prime('time', 'lon')
+    
+    LH = HLV * vprime * qprime
+    LH.name = 'eddylatentheat'
+    LH.desc = 'eddy latent heat flux'
+    LH.unit = ''
+    return LH
+
+  @property
+  def eddymoiststaticenergy(self):
+    '''
+    Returns the instantaneous eddy moist static energy flux
+    
+    '''
+
+    MSE = self.eddylatentheat + self.eddydrystaticenergy
+    MSE.name = 'eddymoiststaticenergy'
+    MSE.desc = 'eddy moist static energy flux'
+    MSE.unit = ''
+    return MSE
+
+  @property
+  def drystaticenergy(self):
+    '''
+    Returns the instantaneous dry static energy flux
+    
+    '''
+    
+    DSE = self.vcomp * (CPAIR * self.temp + GRAV * self.hght)
     DSE.name = 'drystaticenergy'
     DSE.desc = 'dry static energy flux'
     DSE.unit = ''
@@ -135,10 +177,7 @@ class GCMOutput(object):
     
     '''
     
-    vprime = self.vcomp.prime('time', 'lon')
-    qprime = self.sphum.prime('time', 'lon')
-    
-    LH = HLV * vprime * qprime
+    LH = HLV * self.vcomp * self.sphum
     LH.name = 'latentheat'
     LH.desc = 'latent heat flux'
     LH.unit = ''
