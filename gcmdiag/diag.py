@@ -120,7 +120,7 @@ class GCMOutput(object):
     tprime = self.temp.prime('time', 'lon')
     zprime = self.hght.prime('time', 'lon')
     
-    DSE = vprime * (CPAIR * self.pfull.reshape(1, -1, 1, 1) * tprime + GRAV * zprime)
+    DSE = vprime * (CPAIR * tprime + GRAV * zprime)
     DSE.name = 'drystaticenergy'
     DSE.desc = 'dry static energy flux'
     DSE.unit = ''
