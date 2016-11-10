@@ -25,9 +25,7 @@ import gcmdiag as gcm
 import matplotlib.pyplot as pl
 
 # Load the two runs
-daily_files = ['run1/daily.nc', 'run2/daily.nc']
-avg_files = ['run1/average.nc', 'run2/average.nc']
-data = [gcm.NetCDF(df, af) for df, af in zip(daily_files, average_files)]
+data = [gcm.NetCDF('file1.nc'), gcm.NetCDF('file2.nc')]
 
 # Plot colormaps of total angular momentum on a latitude-pressure
 # grid and overlay the mass streamfunction contours
@@ -35,7 +33,7 @@ x = [d.lat for d in data]
 y = [d.pfull for d in data]
 z = [d.totalangmom for d in data]
 c = [d.streamfunc for d in data]
-titles = ['1 bar', '0.5 bar']
+titles = ['File 1', 'File 2']
 fig, ax = gcm.Compare(x, y, z, titles = titles, c = c, invert_y = True)
 
 pl.show()
