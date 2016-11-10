@@ -205,7 +205,7 @@ class GCMOutput(object):
     '''
     
     # Vertically-integrated meridional flux (time and zonal average)
-    z = (1. / GRAV) * self.moiststaticenergy.integral(self.pfull * 100.).avg('time', 'lon')
+    z = (1. / GRAV) * self.moiststaticenergy.avg('time', 'lon').integral(self.pfull * 100.)
     cimf = z.grad(REARTH * self.lat * np.pi / 180.)
     cimf.name = 'convintmeridflux'
     cimf.desc = 'time-mean, zonal-mean convergence of the vertically-integrated meridional flux of moist static energy'
