@@ -164,7 +164,7 @@ class GCMOutput(object):
     
     '''
     
-    DSE = self.vcomp * (CPAIR * self.temp + GRAV * self.hght[:,:-1,:,:]) # DEBUG
+    DSE = self.vcomp * (CPAIR * self.temp + GRAV * self.hght)
     DSE.name = 'drystaticenergy'
     DSE.desc = 'dry static energy flux'
     DSE.unit = ''
