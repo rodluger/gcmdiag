@@ -39,7 +39,8 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   ax[1].set_xlabel('Energy flux (W/m^2)')
   ax[1].yaxis.tick_right()
   ax[1].yaxis.set_label_position("right")
-  ax[1].legend(loc = 'best')
+  ax[1].legend(loc = 'upper right')
+  ax[1].set_title('Comparison to MSE')
   
   pl.suptitle('Energy conservation', fontsize = 18)
   fig.savefig('images/compare_toa_mse_%s.png' % run)

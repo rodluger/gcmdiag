@@ -114,11 +114,11 @@ class array(np.ndarray):
     f = (x2 - x1) / (x2 - x0)
     result = (1 - f) * (y2 - y1) / (x2 - x1) + f * (y1 - y0) / (x1 - x0)
     
-    # Add zeros to the two edges for simplicity
+    # Add nans to the two edges for simplicity
     eshape = list(result.shape)
     eshape[axis] = 1
     eshape = tuple(eshape)
-    edge = np.zeros(eshape)
+    edge = np.zeros(eshape) * np.nan
     result = np.concatenate([edge, result, edge], axis = axis)
     
     return array(result, unit = '', name = 'grad(%s)' % self.name, dims = self.dims, desc = 'grad(%s)' % self.name)
