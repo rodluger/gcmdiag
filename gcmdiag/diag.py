@@ -210,6 +210,11 @@ class GCMOutput(object):
     
     # This is the vertically-integrated meridional moist static energy flux (time and zonal average)
     phi = (1. / REARTH) * self.moist_static_energy_flux.integral(self.pfull * 100. / GRAV).avg('time', 'lon')
+    
+    # DEBUG
+    phi -= self.vcomp.integral(self.pfull * 100.).avg('time', 'lon')
+    # /DEBUG
+    
     phi.name = 'atmospheric_energy_flux'
     phi.desc = 'atmospheric energy flux'
     phi.unit = 'W / m^2'
