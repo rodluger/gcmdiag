@@ -209,12 +209,7 @@ class GCMOutput(object):
     '''
     
     # This is the vertically-integrated meridional moist static energy flux (time and zonal average)
-    phi = (1. / REARTH) * self.moist_static_energy_flux.integral(self.pfull * 100. / GRAV).avg('time', 'lon')
-    
-    # DEBUG
-    phi -= self.vcomp.integral(self.pfull * 100.).avg('time', 'lon')
-    # /DEBUG
-    
+    phi = (1. / REARTH) * self.moist_static_energy_flux.integral(self.pfull * 100. / GRAV).avg('time', 'lon')    
     phi.name = 'atmospheric_energy_flux'
     phi.desc = 'atmospheric energy flux'
     phi.unit = 'W / m^2'
@@ -248,6 +243,12 @@ class GCMOutput(object):
     lat = self.lat * np.pi / 180.
     z = self.atmospheric_energy_flux * np.cos(lat)
     cimf = (1. / np.cos(lat)) * z.grad(lat)
+    
+    # DEBUG
+    cimf -= self.vcomp.integral(self.pfull * 100.).avg('time', 'lon')
+    # /DEBUG
+    
+    
     cimf.name = 'energy_flux_gradient'
     cimf.desc = 'time-mean, zonal-mean convergence of the vertically-integrated meridional flux of moist static energy'
     cimf.unit = 'W / m^2'
