@@ -18,6 +18,7 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   y = data.lat
   toa = data.toa_imbalance
   efg = data.energy_flux_gradient
+  efg_eddy = data.eddy_energy_flux_gradient
   
   # Plot
   fig = pl.figure(figsize = (14, 10))
@@ -33,6 +34,7 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   
   # 1D comparison
   ax[1].plot(efg, y, 'b-', lw = 2, label = r'$\nabla\Phi$')
+  ax[1].plot(efg_eddy, y, 'b--', lw = 2, alpha = 0.5, label = r'$\nabla\Phi_\mathrm{eddy}$')
   ax[1].plot(toa.avg('lon'), y, 'r-', lw = 2, label = 'TOA')
   ax[1].set_ylabel(ax[0].get_ylabel())
   ax[1].set_ylim(ax[0].get_ylim())
