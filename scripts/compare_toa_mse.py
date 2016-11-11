@@ -14,6 +14,7 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   data = gcm.NetCDF(file, rectify = True)
   
   # DEBUG
+  fig = pl.figure()
   pl.plot(data.integral_vbar_zbar, data.lat, 'b-')
   pl.ylabel('Latitude (deg)')
   pl.xlabel('Integral vbar g zbar')
