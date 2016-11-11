@@ -25,8 +25,8 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   uvp = data.vcomp.prime('time', 'lon') * data.ucomp.prime('time', 'lon')
   em = uvp.avg('time') * REARTH * np.cos(data.lat * np.pi / 180.).reshape(1,-1,1)
   eh = (data.vcomp.prime('time', 'lon') * data.temp.prime('time', 'lon')).avg('time')
-  dse = data.drystaticenergy.avg('time')
-  lhf = data.latentheat.avg('time')
+  dse = data.dry_static_energy_flux.avg('time')
+  lhf = data.latent_heat_flux.avg('time')
   del data
   
   sig0p5 = int(np.argmin(np.abs(pfull - pfull[-1] / 2.)))

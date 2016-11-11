@@ -16,8 +16,8 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   # Get arrays
   x = data.lon
   y = data.lat
-  toa = data.toaimbalance
-  mse = data.convintmeridflux
+  toa = data.toa_imbalance
+  efg = data.energy_flux_gradient
   
   # Plot
   fig = pl.figure(figsize = (14, 10))
@@ -32,7 +32,7 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   ax[0].set_title('TOA imbalance')
   
   # 1D comparison
-  ax[1].plot(mse, y, 'b-', lw = 2, label = 'MSE')
+  ax[1].plot(efg, y, 'b-', lw = 2, label = r'$\nabla\Phi$'')
   ax[1].plot(toa.avg('lon'), y, 'r-', lw = 2, label = 'TOA')
   ax[1].set_ylabel(ax[0].get_ylabel())
   ax[1].set_ylim(ax[0].get_ylim())
@@ -40,7 +40,7 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   ax[1].yaxis.tick_right()
   ax[1].yaxis.set_label_position("right")
   ax[1].legend(loc = 'upper right')
-  ax[1].set_title('Comparison to MSE')
+  ax[1].set_title(r'Comparison to $\nabla\Phi$')
   
   pl.suptitle('Energy conservation', fontsize = 18)
   fig.savefig('images/compare_toa_mse_%s.png' % run)

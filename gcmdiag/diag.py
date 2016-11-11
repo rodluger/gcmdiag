@@ -29,7 +29,7 @@ class GCMOutput(object):
     raise NotImplementedError('Not a user-facing class!')
   
   @property
-  def streamfunc(self):
+  def streamfunction(self):
     '''
     Returns the streamfunction Psi averaged over time and longitude
     
@@ -40,11 +40,15 @@ class GCMOutput(object):
     integrand = vbar * cosTheta
     psi = np.zeros((len(self.pfull), len(self.lat)))
     for i in range(len(self.pfull)):
-      psi[i] = -np.trapz(integrand[:i], self.pfull[:i], axis = 0)
-    return array(psi, name = 'streamfunc', desc = 'stream function', unit = '')
+      psi[i] = -np.trapz(integrand[:i], self.pfull[:i] * 100., axis = 0)
+    psi = array(psi)
+    psi.name = 'streamfunction'
+    psi.desc = 'streamfunction'
+    psi.unit = 'kg / s^3'
+    return psi
   
   @property
-  def eddyangmom(self):
+  def eddy_angular_momentum_flux(self):
     '''
     Returns the time and zonal mean eddy angular momentum flux
   
@@ -52,26 +56,26 @@ class GCMOutput(object):
   
     uvp = self.vcomp.prime('time', 'lon') * self.ucomp.prime('time', 'lon')
     F = uvp.avg('time', 'lon') * REARTH * np.cos(self.lat * np.pi / 180.).reshape(1, -1)
-    F.name = 'eddyangmom'
+    F.name = 'eddy_angular_momentum_flux'
     F.desc = 'eddy angular momentum flux'
-    F.unit = ''
+    F.unit = 'm^3 / s^2'
     return F
     
   @property
-  def eddyheat(self):
+  def eddy_heat_flux(self):
     '''
     Returns the time and zonal mean meridional eddy heat flux
   
     '''
   
     F = (CPAIR * self.vcomp.prime('time', 'lon') * self.temp.prime('time', 'lon')).avg('time', 'lon')
-    F.name = 'eddyheat'
+    F.name = 'eddy_heat_flux'
     F.desc = 'meridional eddy heat flux'
     F.unit = 'K m/s'
     return F
   
   @property
-  def relangmom(self):
+  def relative_angular_momentum(self):
     '''
     Returns the relative angular momentum of the atmosphere
 
@@ -79,26 +83,26 @@ class GCMOutput(object):
       
     # Relative angular momentum
     M = self.ucomp.avg('time', 'lon') * REARTH * np.cos(self.lat * np.pi / 180.).reshape(1,-1)
-    M.name = 'relangmom'
+    M.name = 'relative_angular_momentum'
     M.desc = 'relative angular momentum'
-    M.unit = ''
+    M.unit = 'm^2 / s'
     return M
 
   @property
-  def totalangmom(self):
+  def total_angular_momentum(self):
     '''
     Returns the total angular momentum of the atmosphere
     
     '''
 
     M = self.relangmom + OMEGA * REARTH ** 2 * np.cos(self.lat * np.pi / 180.).reshape(1,-1) ** 2
-    M.name = 'totalangmom'
+    M.name = 'total_angular_momentum'
     M.desc = 'total angular momentum'
-    M.unit = ''
+    M.unit = 'm^2 / s'
     return M
   
   @property
-  def toaimbalance(self):
+  def toa_imbalance(self):
     '''
     Returns the top-of-atmosphere radiative imbalance (DSW - ULW)
     
@@ -107,12 +111,12 @@ class GCMOutput(object):
     olr = self.olr.avg('time')
     TOA = swdn - olr
     TOA.dims = olr.dims
-    TOA.name = 'toaimbalance'
+    TOA.name = 'toa_imbalance'
     TOA.desc = 'TOA imbalance'
     return TOA
   
   @property
-  def eddydrystaticenergy(self):
+  def eddy_dry_static_energy_flux(self):
     '''
     Returns the instantaneous eddy dry static energy flux
     
@@ -123,13 +127,13 @@ class GCMOutput(object):
     zprime = self.hght.prime('time', 'lon')
     
     DSE = vprime * (CPAIR * tprime + GRAV * zprime)
-    DSE.name = 'eddydrystaticenergy'
+    DSE.name = 'eddy_dry_static_energy_flux'
     DSE.desc = 'eddy dry static energy flux'
-    DSE.unit = ''
+    DSE.unit = 'm^3 / s^3'
     return DSE
 
   @property
-  def eddylatentheat(self):
+  def eddy_latent_heat_flux(self):
     '''
     Returns the instantaneous eddy latent heat flux
     
@@ -139,79 +143,94 @@ class GCMOutput(object):
     qprime = self.sphum.prime('time', 'lon')
     
     LH = HLV * vprime * qprime
-    LH.name = 'eddylatentheat'
+    LH.name = 'eddy_latent_heat_flux'
     LH.desc = 'eddy latent heat flux'
-    LH.unit = ''
+    LH.unit = 'm^3 / s^3'
     return LH
 
   @property
-  def eddymoiststaticenergy(self):
+  def eddy_moist_static_energy_flux(self):
     '''
     Returns the instantaneous eddy moist static energy flux
     
     '''
 
-    MSE = self.eddylatentheat + self.eddydrystaticenergy
-    MSE.name = 'eddymoiststaticenergy'
+    MSE = self.eddy_latent_heat_flux + self.eddy_dry_static_energy_flux
+    MSE.name = 'eddy_moist_static_energy_flux'
     MSE.desc = 'eddy moist static energy flux'
-    MSE.unit = ''
+    MSE.unit = 'm^3 / s^3'
     return MSE
 
   @property
-  def drystaticenergy(self):
+  def dry_static_energy_flux(self):
     '''
     Returns the instantaneous dry static energy flux
     
     '''
     
     DSE = self.vcomp * (CPAIR * self.temp + GRAV * self.hght)
-    DSE.name = 'drystaticenergy'
+    DSE.name = 'dry_static_energy_flux'
     DSE.desc = 'dry static energy flux'
-    DSE.unit = ''
+    DSE.unit = 'm^3 / s^3'
     return DSE
 
   @property
-  def latentheat(self):
+  def latent_heat_flux(self):
     '''
     Returns the instantaneous latent heat flux
     
     '''
     
     LH = HLV * self.vcomp * self.sphum
-    LH.name = 'latentheat'
+    LH.name = 'latent_heat_flux'
     LH.desc = 'latent heat flux'
-    LH.unit = ''
+    LH.unit = 'm^3 / s^3'
     return LH
 
   @property
-  def moiststaticenergy(self):
+  def moist_static_energy_flux(self):
     '''
     Returns the instantaneous moist static energy flux
     
     '''
 
-    MSE = self.latentheat + self.drystaticenergy
-    MSE.name = 'moiststaticenergy'
+    MSE = self.latent_heat_flux + self.dry_static_energy_flux
+    MSE.name = 'moist_static_energy_flux'
     MSE.desc = 'moist static energy flux'
-    MSE.unit = ''
+    MSE.unit = 'm^3 / s^3'
     return MSE
-
+  
   @property
-  def convintmeridflux(self):
+  def atmospheric_energy_flux(self):
     '''
-    Returns the convergence of the vertically-integrated time and zonal average meridional 
-    flux of moist static energy. Check out equation (21) in Trenberth (1997) and equation
-    (9.8) in Pierrehumbert's "Principles of Planetary Climate."
+    Returns the atmospheric energy flux, defined in equation (9.8) of
+    Pierrehumbert's "Principles of Planetary Climate."
+    
+    '''
+    
+    # This is the vertically-integrated meridional moist static energy flux (time and zonal average)
+    phi = (1. / REARTH) * self.moist_static_energy_flux.avg('time', 'lon').integral(self.pfull * 100. / GRAV)
+    phi.name = 'atmospheric_energy_flux'
+    phi.desc = 'atmospheric energy flux'
+    phi.unit = 'W / m^2'
+    return phi
+    
+  @property
+  def energy_flux_gradient(self):
+    '''
+    Returns the latitudinal gradient of the atmospheric energy flux. More specifically, this is the convergence of the 
+    vertically-integrated time and zonal average meridional flux of moist static energy. 
+    Check out equation (21) in Trenberth (1997) and equation (9.8) in Pierrehumbert's "Principles of Planetary Climate."
     
     '''
     
     # Vertically-integrated meridional flux (time and zonal average)
-    phi = self.lat * np.pi / 180.
-    z = (1. / REARTH) * self.moiststaticenergy.avg('time', 'lon').integral(self.pfull * 100. / GRAV) * np.cos(phi)
-    cimf = (1. / np.cos(phi)) * z.grad(phi)
-    cimf.name = 'convintmeridflux'
+    lat = self.lat * np.pi / 180.
+    z = self.atmospheric_energy_flux * np.cos(lat)
+    cimf = (1. / np.cos(lat)) * z.grad(lat)
+    cimf.name = 'energy_flux_gradient'
     cimf.desc = 'time-mean, zonal-mean convergence of the vertically-integrated meridional flux of moist static energy'
-    cimf.unit = ''
+    cimf.unit = 'W / m^2'
     return cimf
 
 class NetCDF(GCMOutput):
