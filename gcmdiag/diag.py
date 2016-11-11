@@ -200,13 +200,15 @@ class GCMOutput(object):
   def convintmeridflux(self):
     '''
     Returns the convergence of the vertically-integrated time and zonal average meridional 
-    flux of moist static energy
+    flux of moist static energy. Check out equation (21) in Trenberth (1997) and equation
+    (9.8) in Pierrehumbert's "Principles of Planetary Climate."
     
     '''
     
     # Vertically-integrated meridional flux (time and zonal average)
-    z = (1. / GRAV) * self.moiststaticenergy.avg('time', 'lon').integral(self.pfull * 100.)
-    cimf = z.grad(REARTH * self.lat * np.pi / 180.)
+    phi = self.lat * np.pi / 180.
+    z = (1. / REARTH) * self.moiststaticenergy.avg('time', 'lon').integral(self.pfull * 100. / GRAV) * np.cos(phi)
+    cimf = (1. / np.cos(phi)) * z.grad(phi)
     cimf.name = 'convintmeridflux'
     cimf.desc = 'time-mean, zonal-mean convergence of the vertically-integrated meridional flux of moist static energy'
     cimf.unit = ''

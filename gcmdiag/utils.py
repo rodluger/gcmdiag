@@ -57,9 +57,6 @@ class array(np.ndarray):
     if len(axis):
       if 'time' in axes:
         n = np.argmax(axes == 'time')
-        
-        import pdb; pdb.set_trace()
-        
         arr = np.delete(self, range(int(self.burnin * self.shape[n])), axis = n)
       else:
         arr = self
