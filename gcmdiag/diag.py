@@ -166,9 +166,14 @@ class GCMOutput(object):
     '''
     Returns the instantaneous dry static energy flux
     
+    .. warning:: I'm subtracting off a pressure-integrated mean velocity here.
+    
     '''
     
-    vmu = self.vcomp.integral(self.pfull / self.pfull[-1]).avg('time', 'lon').reshape(1,1,-1,1) # DEBUG
+    # First we subtract off a pressure-integrated mean velocity. This makes sure
+    # the net mass flux across each latitude circle is zero, as it should be for 
+    # the time-mean flow on a season-less planet.
+    vmu = self.vcomp.integral(self.pfull / self.pfull[-1]).avg('time', 'lon').reshape(1,1,-1,1)
     DSE = (self.vcomp - vmu) * (CPAIR * self.temp + GRAV * self.hght)
     DSE.name = 'dry_static_energy_flux'
     DSE.desc = 'dry static energy flux'
@@ -180,9 +185,14 @@ class GCMOutput(object):
     '''
     Returns the instantaneous latent heat flux
     
+    .. warning:: I'm subtracting off a pressure-integrated mean velocity here.
+    
     '''
     
-    vmu = self.vcomp.integral(self.pfull / self.pfull[-1]).avg('time', 'lon').reshape(1,1,-1,1) # DEBUG
+    # First we subtract off a pressure-integrated mean velocity. This makes sure
+    # the net mass flux across each latitude circle is zero, as it should be for 
+    # the time-mean flow on a season-less planet.
+    vmu = self.vcomp.integral(self.pfull / self.pfull[-1]).avg('time', 'lon').reshape(1,1,-1,1)
     LH = HLV * (self.vcomp - vmu) * self.sphum
     LH.name = 'latent_heat_flux'
     LH.desc = 'latent heat flux'
