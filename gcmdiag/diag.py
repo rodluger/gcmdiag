@@ -266,6 +266,20 @@ class GCMOutput(object):
     cimf.unit = 'W / m^2'
     return cimf
 
+  @property
+  def integral_vbar_zbar(self):
+    '''
+    The vertically-integrated ``vbar * g * zbar``
+    
+    '''
+    
+    vgz = self.vcomp.avg('time', 'lon') * GRAV * self.hght.avg('time', 'lon')
+    vgz = vgz.integral(self.pfull * 100.)
+    vgz.name = 'integral_vbar_zbar'
+    vgz.desc = 'vertically-integrated vbar * g * zbar'
+    vgz.unit = 'm^2 kg / s^5'
+    return vgz
+
 class NetCDF(GCMOutput):
   '''
   A smart netcdf data container

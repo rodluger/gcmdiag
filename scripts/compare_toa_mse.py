@@ -13,6 +13,14 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   file = os.path.join(GCMDIAG_OUT, 'N2-%s/day1000h00/day1000h00.atmos_daily.nc' % run)
   data = gcm.NetCDF(file, rectify = True)
   
+  # DEBUG
+  pl.plot(data.integral_vbar_zbar, data.lat, 'b-')
+  pl.ylabel('Latitude (deg)')
+  pl.xlabel('Integral vbar g zbar')
+  pl.ylim(-90,90)
+  fig.savefig('images/debug_%s.png' % run)
+  continue
+  
   # Get arrays
   x = data.lon
   y = data.lat
