@@ -17,7 +17,7 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   x = data.lon
   y = data.lat
   toa = data.toa_imbalance
-  efg = data.eddy_energy_flux_gradient
+  efg = data.energy_flux_gradient
   
   # Plot
   fig = pl.figure(figsize = (14, 10))
