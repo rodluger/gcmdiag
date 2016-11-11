@@ -214,6 +214,21 @@ class GCMOutput(object):
     phi.desc = 'atmospheric energy flux'
     phi.unit = 'W / m^2'
     return phi
+
+  @property
+  def eddy_atmospheric_energy_flux(self):
+    '''
+    Returns the eddy atmospheric energy flux, similar to equation (9.8) of
+    Pierrehumbert's "Principles of Planetary Climate."
+    
+    '''
+    
+    # This is the vertically-integrated meridional moist static energy flux (time and zonal average)
+    phi = (1. / REARTH) * self.eddy_moist_static_energy_flux.integral(self.pfull * 100. / GRAV).avg('time', 'lon')
+    phi.name = 'eddy_atmospheric_energy_flux'
+    phi.desc = 'eddy atmospheric energy flux'
+    phi.unit = 'W / m^2'
+    return phi
     
   @property
   def energy_flux_gradient(self):
@@ -230,6 +245,24 @@ class GCMOutput(object):
     cimf = (1. / np.cos(lat)) * z.grad(lat)
     cimf.name = 'energy_flux_gradient'
     cimf.desc = 'time-mean, zonal-mean convergence of the vertically-integrated meridional flux of moist static energy'
+    cimf.unit = 'W / m^2'
+    return cimf
+
+  @property
+  def eddy_energy_flux_gradient(self):
+    '''
+    Returns the latitudinal gradient of the eddy atmospheric energy flux. More specifically, this is the convergence of the 
+    vertically-integrated time and zonal average meridional eddy flux of moist static energy. 
+    Check out equation (21) in Trenberth (1997) and equation (9.8) in Pierrehumbert's "Principles of Planetary Climate."
+    
+    '''
+    
+    # Vertically-integrated meridional flux (time and zonal average)
+    lat = self.lat * np.pi / 180.
+    z = self.eddy_atmospheric_energy_flux * np.cos(lat)
+    cimf = (1. / np.cos(lat)) * z.grad(lat)
+    cimf.name = 'energy_flux_gradient'
+    cimf.desc = 'time-mean, zonal-mean convergence of the vertically-integrated meridional eddy flux of moist static energy'
     cimf.unit = 'W / m^2'
     return cimf
 
