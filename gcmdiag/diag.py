@@ -168,7 +168,8 @@ class GCMOutput(object):
     
     '''
     
-    DSE = self.vcomp * (CPAIR * self.temp + GRAV * self.hght)
+    vmu = self.vcomp.integral(self.pfull / self.pfull[-1]).avg('time', 'lon') # DEBUG
+    DSE = (self.vcomp - vmu) * (CPAIR * self.temp + GRAV * self.hght)
     DSE.name = 'dry_static_energy_flux'
     DSE.desc = 'dry static energy flux'
     DSE.unit = 'm^3 / s^3'
@@ -181,7 +182,8 @@ class GCMOutput(object):
     
     '''
     
-    LH = HLV * self.vcomp * self.sphum
+    vmu = self.vcomp.integral(self.pfull / self.pfull[-1]).avg('time', 'lon') # DEBUG
+    LH = HLV * (self.vcomp - vmu) * self.sphum
     LH.name = 'latent_heat_flux'
     LH.desc = 'latent heat flux'
     LH.unit = 'm^3 / s^3'
@@ -209,14 +211,7 @@ class GCMOutput(object):
     '''
     
     # This is the vertically-integrated meridional moist static energy flux (time and zonal average)
-    #phi = (1. / REARTH) * self.moist_static_energy_flux.integral(self.pfull * 100. / GRAV).avg('time', 'lon')    
-    
-    # DEBUG
-    DSE = self.vcomp.avg('time', 'lon') * (CPAIR * self.temp.avg('time', 'lon') + GRAV * self.hght.avg('time', 'lon'))
-    LH = HLV * self.vcomp.avg('time', 'lon') * self.sphum.avg('time', 'lon')
-    moist_static_energy_flux = DSE + LH
-    phi = (1. / REARTH) * moist_static_energy_flux.integral(self.pfull * 100. / GRAV)  
-    
+    phi = (1. / REARTH) * self.moist_static_energy_flux.integral(self.pfull * 100. / GRAV).avg('time', 'lon')    
     phi.name = 'atmospheric_energy_flux'
     phi.desc = 'atmospheric energy flux'
     phi.unit = 'W / m^2'
