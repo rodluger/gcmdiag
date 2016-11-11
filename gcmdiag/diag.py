@@ -199,7 +199,7 @@ class GCMOutput(object):
     MSE.desc = 'moist static energy flux'
     MSE.unit = 'm^3 / s^3'
     return MSE
-  
+    
   @property
   def atmospheric_energy_flux(self):
     '''
@@ -209,7 +209,14 @@ class GCMOutput(object):
     '''
     
     # This is the vertically-integrated meridional moist static energy flux (time and zonal average)
-    phi = (1. / REARTH) * self.moist_static_energy_flux.integral(self.pfull * 100. / GRAV).avg('time', 'lon')    
+    #phi = (1. / REARTH) * self.moist_static_energy_flux.integral(self.pfull * 100. / GRAV).avg('time', 'lon')    
+    
+    # DEBUG
+    DSE = self.vcomp.avg('time', 'lon') * (CPAIR * self.temp.avg('time', 'lon') + GRAV * self.hght.avg('time', 'lon'))
+    LH = HLV * self.vcomp.avg('time', 'lon') * self.sphum.avg('time', 'lon')
+    moist_static_energy_flux = DSE + LH
+    phi = (1. / REARTH) * moist_static_energy_flux.integral(self.pfull * 100. / GRAV)  
+    
     phi.name = 'atmospheric_energy_flux'
     phi.desc = 'atmospheric energy flux'
     phi.unit = 'W / m^2'
