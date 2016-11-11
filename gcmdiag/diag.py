@@ -168,7 +168,7 @@ class GCMOutput(object):
     
     '''
     
-    vmu = self.vcomp.integral(self.pfull / self.pfull[-1]).avg('time', 'lon') # DEBUG
+    vmu = self.vcomp.integral(self.pfull / self.pfull[-1]).avg('time', 'lon').reshape(1,1,-1,1) # DEBUG
     DSE = (self.vcomp - vmu) * (CPAIR * self.temp + GRAV * self.hght)
     DSE.name = 'dry_static_energy_flux'
     DSE.desc = 'dry static energy flux'
@@ -182,7 +182,7 @@ class GCMOutput(object):
     
     '''
     
-    vmu = self.vcomp.integral(self.pfull / self.pfull[-1]).avg('time', 'lon') # DEBUG
+    vmu = self.vcomp.integral(self.pfull / self.pfull[-1]).avg('time', 'lon').reshape(1,1,-1,1) # DEBUG
     LH = HLV * (self.vcomp - vmu) * self.sphum
     LH.name = 'latent_heat_flux'
     LH.desc = 'latent heat flux'
