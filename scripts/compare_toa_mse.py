@@ -32,7 +32,7 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   ax[0].set_title('TOA imbalance')
   
   # 1D comparison
-  ax[1].plot(efg, y, 'b-', lw = 2, label = r'$\nabla\Phi$'')
+  ax[1].plot(efg, y, 'b-', lw = 2, label = r'$\nabla\Phi$')
   ax[1].plot(toa.avg('lon'), y, 'r-', lw = 2, label = 'TOA')
   ax[1].set_ylabel(ax[0].get_ylabel())
   ax[1].set_ylim(ax[0].get_ylim())
