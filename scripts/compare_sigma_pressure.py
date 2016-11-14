@@ -21,8 +21,8 @@ for run in ['1bar', 'p5bar', 'p25bar']:
     data = gcm.NetCDF(file, rectify = rectify)
     x.append(data.lat)
     y.append(data.pfull)
-    z.append(data.total_angular_momentum)
-    c.append(data.streamfunction)
+    z.append(data.angular_momentum(relative = False))
+    c.append(data.streamfunction())
     del data
   
   titles = ['Sigma coordinates', 'Pressure coordinates']

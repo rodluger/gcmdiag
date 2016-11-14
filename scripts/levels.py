@@ -20,17 +20,18 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   v = data.vcomp.avg('time')
   u = data.ucomp.avg('time')
   t = data.temp.avg('time')
-  mr = u * REARTH * np.cos(data.lat * np.pi / 180.).reshape(1,-1,1)
-  mt = mr + OMEGA * REARTH ** 2 * np.cos(data.lat * np.pi / 180.).reshape(1,-1,1) ** 2
-  uvp = data.vcomp.prime('time', 'lon') * data.ucomp.prime('time', 'lon')
-  em = uvp.avg('time') * REARTH * np.cos(data.lat * np.pi / 180.).reshape(1,-1,1)
-  eh = (data.vcomp.prime('time', 'lon') * data.temp.prime('time', 'lon')).avg('time')
-  dse = data.dry_static_energy_flux.avg('time')
-  lhf = data.latent_heat_flux.avg('time')
+  mr = data.angular_momentum(relative = True).avg('time')
+  mt = data.angular_momentum(relative = False).avg('time')
+  em = data.angular_momentum_flux(eddy = True).avg('time')
+  eh = data.heat_flux(eddy = True).avg('time')
+  dse = data.dry_static_energy_flux().avg('time')
+  lhf = data.latent_heat_flux().avg('time')
   del data
   
+  # The index of the halfway point in pressure
   sig0p5 = int(np.argmin(np.abs(pfull - pfull[-1] / 2.)))
   
+  # Loop over the different levels
   for level, ind in zip(['surface', 'sig0p5'], [-1, sig0p5]):
   
     params = [[lon, lat, v[ind], None, False, 'Meridional wind'],
