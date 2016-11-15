@@ -15,7 +15,6 @@ fig.subplots_adjust(wspace = 0.05, hspace = 0.075)
 # Do all three original runs
 for i, run in enumerate(runs):
   
-  '''
   # Load
   print("Running %s..." % run)
   file = os.path.join(GCMDIAG_OUT, 'N2-%s/day1000h00/day1000h00.atmos_daily.nc' % run)
@@ -30,27 +29,26 @@ for i, run in enumerate(runs):
   efg_mean = efg - efg_eddy
   efg_dry = data.energy_flux_gradient(dry = True, latent = False)
   efg_latent = data.energy_flux_gradient(dry = False, latent = True)
-  '''
   
   # Energy balance
-  #ax[i,0].plot(y, toa, 'r-', lw = 2, label = 'TOA')
-  #ax[i,0].plot(y, efg, 'b-', lw = 2, label = r'$\nabla\Phi$')
+  ax[i,0].plot(y, toa, 'r-', lw = 2, label = 'TOA')
+  ax[i,0].plot(y, efg, 'b-', lw = 2, label = r'$\nabla\Phi$')
   ax[i,0].set_xlim(-90, 90)
   if i < 2: ax[i,0].set_xticklabels([])
   ax[i,0].set_ylabel(r'Energy flux (W/m$^2$)')
   ax[i,0].legend(loc = 'upper left')
   
   # Mean and eddy
-  #ax[i,1].plot(y, efg_eddy, 'r-', lw = 2, alpha = 0.75, label = r'$\nabla\Phi_\mathrm{eddy}$')
-  #ax[i,1].plot(y, efg_mean, 'b-', lw = 2, alpha = 0.75, label = r'$\nabla\Phi_\mathrm{mean}$')
+  ax[i,1].plot(y, efg_eddy, 'r-', lw = 2, alpha = 0.75, label = r'$\nabla\Phi_\mathrm{eddy}$')
+  ax[i,1].plot(y, efg_mean, 'b-', lw = 2, alpha = 0.75, label = r'$\nabla\Phi_\mathrm{mean}$')
   ax[i,1].set_xlim(-90, 90)
   ax[i,1].set_yticklabels([])
   if i < 2: ax[i,1].set_xticklabels([])
   ax[i,1].legend(loc = 'upper left')
   
   # Dry and latent
-  #ax[i,2].plot(y, efg_dry, 'r-', lw = 2, alpha = 0.75, label = r'$\nabla\Phi_\mathrm{dry}$')
-  #ax[i,2].plot(y, efg_latent, 'b-', lw = 2, alpha = 0.75, label = r'$\nabla\Phi_\mathrm{latent}$')
+  ax[i,2].plot(y, efg_dry, 'r-', lw = 2, alpha = 0.75, label = r'$\nabla\Phi_\mathrm{dry}$')
+  ax[i,2].plot(y, efg_latent, 'b-', lw = 2, alpha = 0.75, label = r'$\nabla\Phi_\mathrm{latent}$')
   ax[i,2].set_xlim(-90, 90)
   ax[i,2].set_yticklabels([])
   if i < 2: ax[i,2].set_xticklabels([])
