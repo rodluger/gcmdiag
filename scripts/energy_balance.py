@@ -9,7 +9,7 @@ import numpy as np
 runs = ['1bar', 'p5bar', 'p25bar']
 
 # Plot
-fig, ax = pl.subplots(3, 3, figsize = (12, 12))
+fig, ax = pl.subplots(3, 3, figsize = (18, 12))
 fig.subplots_adjust(wspace = 0.05, hspace = 0.075)
 
 # Do all three original runs
