@@ -24,36 +24,43 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   efg_latent = data.energy_flux_gradient(dry = False, latent = True)
   
   # Plot
-  fig = pl.figure(figsize = (14, 10))
-  ax = [pl.subplot2grid((1, 21), (0, 0), colspan = 10),
-        pl.subplot2grid((1, 21), (0, 11), colspan = 10)]
-  fig.subplots_adjust(top = 0.875)
+  fig, ax = pl.subplots(1, 3, figsize = (16, 6))
+  fig.subplots_adjust(wspace = 0.05)
+  ax = ax.flatten()
   
-  # Mean and eddy parts
-  ax[0].plot(toa, y, 'r-', lw = 2, label = 'TOA')
-  ax[0].plot(efg, y, 'b-', lw = 2, label = r'$\nabla\Phi$')
-  ax[0].plot(efg_eddy, y, 'b--', lw = 2, alpha = 0.5, label = r'$\nabla\Phi_\mathrm{eddy}$')
-  ax[0].plot(efg_mean, y, 'b-.', lw = 2, alpha = 0.5, label = r'$\nabla\Phi_\mathrm{mean}$')
-  ax[0].set_ylabel(ax[0].get_ylabel())
-  ax[0].set_ylim(ax[0].get_ylim())
-  ax[0].set_xlabel('Energy flux (W/m^2)')
-  ax[0].yaxis.tick_right()
-  ax[0].yaxis.set_label_position("right")
-  ax[0].legend(loc = 'upper right')
+  # Energy balance
+  ax[0].plot(y, toa, 'r-', lw = 2, label = 'TOA')
+  ax[0].plot(y, efg, 'b-', lw = 2, label = r'$\nabla\Phi$')
+  ax[0].set_xlabel('Latitude (deg)')
+  ax[0].set_xlim(-90, 90)
+  ax[0].set_ylabel('Energy flux (W/m^2)')
+  ax[0].legend(loc = 'upper left')
   ax[0].set_title('Mean and eddy')
   
+  # Mean and eddy
+  ax[1].plot(y, efg_eddy, 'r-', lw = 2, alpha = 0.75, label = r'$\nabla\Phi_\mathrm{eddy}$')
+  ax[1].plot(y, efg_mean, 'b-', lw = 2, alpha = 0.75, label = r'$\nabla\Phi_\mathrm{mean}$')
+  ax[1].set_xlabel('Latitude (deg)')
+  ax[1].set_xlim(-90, 90)
+  ax[1].set_ylabel('')
+  ax[1].set_yticklabels([])
+  ax[1].legend(loc = 'upper left')
+  ax[1].set_title('Mean and eddy')
+  
   # Dry and latent
-  ax[0].plot(toa, y, 'r-', lw = 2, label = 'TOA')
-  ax[1].plot(efg, y, 'b-', lw = 2, label = r'$\nabla\Phi$')
-  ax[1].plot(efg_dry, y, 'b--', lw = 2, alpha = 0.5, label = r'$\nabla\Phi_\mathrm{dry}$')
-  ax[1].plot(efg_latent, y, 'b--', lw = 2, alpha = 0.5, label = r'$\nabla\Phi_\mathrm{latent}$')
-  ax[1].set_ylabel(ax[0].get_ylabel())
-  ax[1].set_ylim(ax[0].get_ylim())
-  ax[1].set_xlabel('Energy flux (W/m^2)')
-  ax[1].yaxis.tick_right()
-  ax[1].yaxis.set_label_position("right")
-  ax[1].legend(loc = 'upper right')
-  ax[1].set_title('Latent and dry')
+  ax[2].plot(y, efg_dry, 'r-', lw = 2, alpha = 0.75, label = r'$\nabla\Phi_\mathrm{dry}$')
+  ax[2].plot(y, efg_latent, 'b-', lw = 2, alpha = 0.75, label = r'$\nabla\Phi_\mathrm{latent}$')
+  ax[2].set_xlabel('Latitude (deg)')
+  ax[2].set_xlim(-90, 90)
+  ax[2].set_ylabel('')
+  ax[2].set_yticklabels([])
+  ax[2].legend(loc = 'upper left')
+  ax[2].set_title('Latent and dry')
+  
+  # Scale all plots the same
+  ymin = np.min([axis.get_ylim()[0] for axis in ax])
+  ymax = np.max([axis.get_ylim()[1] for axis in ax])
+  [axis.set_ylim(ymin, ymax) for axis in ax]
   
   pl.suptitle('Energy conservation', fontsize = 18)
   fig.savefig('images/energy_balance_%s.png' % run)

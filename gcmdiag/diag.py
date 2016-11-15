@@ -62,8 +62,8 @@ class GCMOutput(object):
       uvp = self.vcomp * self.ucomp
     
     # Get the cosine of the latitude in the correct shape
-    shape = np.ones(len(uvp.shape))
-    shape[np.argmax(uvp.dims == 'lat')] = -1
+    shape = np.ones(len(uvp.shape), dtype = int)
+    shape[np.argmax(np.array(uvp.dims) == 'lat')] = -1
     shape = tuple(shape)
     coslat = np.cos(self.lat * np.pi / 180.).reshape(*shape)
     
@@ -124,8 +124,8 @@ class GCMOutput(object):
         # the time-mean flow on a season-less planet.
         vmu = self.vcomp.integral(self.pfull / self.pfull[-1]).avg('time', 'lon')
         # Now we need to reshape it
-        shape = np.ones(len(self.vcomp.shape))
-        shape[np.argmax(self.vcomp.dims == 'pfull')] = -1
+        shape = np.ones(len(self.vcomp.shape), dtype = int)
+        shape[np.argmax(np.array(self.vcomp.dims) == 'lat')] = -1
         shape = tuple(shape)
         vmu = vmu.reshape(*shape)
       else:
@@ -146,8 +146,8 @@ class GCMOutput(object):
     '''
       
     # Get the cosine of the latitude in the correct shape
-    shape = np.ones(len(self.ucomp.shape))
-    shape[np.argmax(self.ucomp.dims == 'lat')] = -1
+    shape = np.ones(len(self.ucomp.shape), dtype = int)
+    shape[np.argmax(np.array(self.ucomp.dims) == 'lat')] = -1
     shape = tuple(shape)
     coslat = np.cos(self.lat * np.pi / 180.).reshape(*shape)
     
@@ -173,7 +173,7 @@ class GCMOutput(object):
     
     # We need to reshape the downwards sw flux
     shape = list(self.olr.shape)
-    shape[np.argmax(self.olr.dims == 'time')] = 1
+    shape[np.argmax(np.array(self.olr.dims) == 'time')] = 1
     shape = tuple(shape)
     swdn = self.swdn_toa[0].reshape(*shape)
     
@@ -206,8 +206,8 @@ class GCMOutput(object):
         # the time-mean flow on a season-less planet.
         vmu = self.vcomp.integral(self.pfull / self.pfull[-1]).avg('time', 'lon')
         # Now we need to reshape it
-        shape = np.ones(len(self.vcomp.shape))
-        shape[np.argmax(self.vcomp.dims == 'pfull')] = -1
+        shape = np.ones(len(self.vcomp.shape), dtype = int)
+        shape[np.argmax(np.array(self.vcomp.dims) == 'lat')] = -1
         shape = tuple(shape)
         vmu = vmu.reshape(*shape)
       else:
@@ -240,8 +240,8 @@ class GCMOutput(object):
         # the time-mean flow on a season-less planet.
         vmu = self.vcomp.integral(self.pfull / self.pfull[-1]).avg('time', 'lon')
         # Now we need to reshape it
-        shape = np.ones(len(self.vcomp.shape))
-        shape[np.argmax(self.vcomp.dims == 'pfull')] = -1
+        shape = np.ones(len(self.vcomp.shape), dtype = int)
+        shape[np.argmax(np.array(self.vcomp.dims) == 'lat')] = -1
         shape = tuple(shape)
         vmu = vmu.reshape(*shape)
       else:
