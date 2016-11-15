@@ -58,9 +58,8 @@ for run in ['1bar', 'p5bar', 'p25bar']:
   ax[2].set_title('Latent and dry')
   
   # Scale all plots the same
-  ymin = np.min([axis.get_ylim()[0] for axis in ax])
-  ymax = np.max([axis.get_ylim()[1] for axis in ax])
-  [axis.set_ylim(ymin, ymax) for axis in ax]
+  [axis.axhline(0, color = 'k', alpha = 0.5, zorder = -99, ls = '--') for axis in ax]
+  [axis.set_ylim(-200, 250) for axis in ax]
   
   pl.suptitle('Energy conservation', fontsize = 18)
   fig.savefig('images/energy_balance_%s.png' % run)
